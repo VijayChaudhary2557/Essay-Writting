@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essay Writing Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-600 to-purple-700 min-h-screen">
+    <div class="container mx-auto px-4 py-6">
+        <!-- Header -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">
+                        <i class="fas fa-pen-fancy mr-3"></i>
+                        Essay Writing Test
+                    </h1>
+                    <p class="text-white/80">Write your essay on the given topic</p>
+                </div>
+                <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                    <div class="bg-white/20 rounded-lg px-4 py-2">
+                        <div class="text-white text-sm">Backspace</div>
+                        <div id="backspaceCount" class="text-white font-bold text-xl">0</div>
+                    </div>
+                    <div class="bg-white/20 rounded-lg px-4 py-2">
+                        <div class="text-white text-sm">Words</div>
+                        <div id="wordCount" class="text-white font-bold text-xl">0</div>
+                    </div>
+                    <div class="bg-white/20 rounded-lg px-4 py-2">
+                        <div class="text-white text-sm">Time</div>
+                        <div id="timer" class="text-white font-bold text-xl">25:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic Section -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-6">
+            <h2 class="text-2xl font-bold text-white mb-4">
+                <i class="fas fa-lightbulb mr-3 text-yellow-300"></i>
+                Your Topic
+            </h2>
+            <div class="bg-white/20 rounded-lg p-4">
+                <p class="text-white text-lg font-medium"><%= topic %></p>
+            </div>
+            <div class="mt-4 text-white/80 text-sm">
+                <i class="fas fa-info-circle mr-2"></i>
+                Write 180-200 words within 25 minutes. Each backspace reduces score by 2 points.
+            </div>
+        </div>
+
+        <!-- Essay Writing Area -->
+        <div class="grid md:grid-cols-3 gap-6">
+            <!-- Writing Area -->
+            <div class="md:col-span-2">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">
+                        <i class="fas fa-edit mr-3"></i>
+                        Write Your Essay
+                    </h3>
+                    <textarea 
+                        id="essayText" 
+                        class="w-full h-96 p-4 bg-white/90 rounded-lg text-gray-800 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Start writing your essay here..."
+                        spellcheck="true"
+                    ></textarea>
+                    
+                    <!-- Progress Bar -->
+                    <div class="mt-4">
+                        <div class="flex justify-between text-white text-sm mb-2">
+                            <span>Word Count Progress</span>
+                            <span id="wordProgress">0/200</span>
+                        </div>
+                        <div class="w-full bg-white/20 rounded-full h-2">
+                            <div id="progressBar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-time Analysis -->
+            <div class="md:col-span-1">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">
+                        <i class="fas fa-chart-line mr-3"></i>
+                        Real-time Analysis
+                    </h3>
+                    
+                    <!-- Word Count Status -->
+                    <div class="mb-4">
+                        <div class="text-white text-sm mb-2">Word Count Status</div>
+                        <div id="wordStatus" class="text-sm font-medium p-2 rounded">
+                            <i class="fas fa-circle mr-2"></i>
+                            Start writing...
+                        </div>
+                    </div>
+
+                    <!-- Common Errors -->
+                    <div class="mb-4">
+                        <div class="text-white text-sm mb-2">Common Errors</div>
+                        <div id="errorList" class="text-sm space-y-1">
+                            <div class="text-white/60 italic">No errors detected yet</div>
+                        </div>
+                    </div>
+
+                    <!-- Writing Tips -->
+                    <div class="bg-white/20 rounded-lg p-4">
+                        <h4 class="text-white font-semibold mb-2">
+                            <i class="fas fa-lightbulb mr-2 text-yellow-300"></i>
+                            Writing Tips
+                        </h4>
+                        <ul class="text-white/80 text-sm space-y-1">
+                            <li>• Plan your essay structure first</li>
+                            <li>• Use clear topic sentences</li>
+                            <li>• Support with examples</li>
+                            <li>• Check spelling and grammar</li>
+                            <li>• Stay within word limit</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-6 text-center space-x-4">
+            <button id="submitBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300">
+                <i class="fas fa-check mr-2"></i>
+                Submit Essay
+            </button>
+            <button id="resetBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300">
+                <i class="fas fa-redo mr-2"></i>
+                Reset
+            </button>
+            <a href="/topics" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 inline-block">
+                <i class="fas fa-exchange-alt mr-2"></i>
+                Change Topic
+            </a>
+            <a href="/" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 inline-block">
+                <i class="fas fa-home mr-2"></i>
+                Back to Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div id="resultsModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="text-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Test Results</h2>
+                <div id="finalScore" class="text-4xl font-bold text-green-600 mb-2">0</div>
+                <div id="scoreLabel" class="text-lg text-gray-600">Score</div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-2">Test Statistics</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Word Count:</span>
+                            <span id="finalWordCount" class="font-medium">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Time Taken:</span>
+                            <span id="finalTime" class="font-medium">0:00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Backspace Count:</span>
+                            <span id="finalBackspace" class="font-medium">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-2">Deductions</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Backspace Penalty:</span>
+                            <span id="backspacePenalty" class="font-medium text-red-600">-0 pts</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Word Count Penalty:</span>
+                            <span id="wordPenalty" class="font-medium text-red-600">-0 pts</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Time Penalty:</span>
+                            <span id="timePenalty" class="font-medium text-red-600">-0 pts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-semibold text-gray-800 mb-2">Feedback</h3>
+                <div id="feedbackList" class="space-y-2 text-sm text-gray-700">
+                    <!-- Feedback will be populated here -->
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-semibold text-gray-800 mb-2">Errors Found</h3>
+                <div id="finalErrors" class="space-y-1 text-sm text-red-600">
+                    <!-- Errors will be populated here -->
+                </div>
+            </div>
+
+            <div class="text-center space-x-4">
+                <button onclick="location.reload()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-300">
+                    <i class="fas fa-redo mr-2"></i>
+                    Try Again
+                </button>
+                <a href="/" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-300 inline-block">
+                    <i class="fas fa-home mr-2"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Socket.IO
+        const socket = io();
+        
+        // Test variables
+        let startTime = Date.now();
+        let backspaceCount = 0;
+        let timeLimit = 25 * 60; // 25 minutes in seconds
+        let timerInterval;
+        let isTestActive = false;
+
+        // DOM elements
+        const essayText = document.getElementById('essayText');
+        const wordCount = document.getElementById('wordCount');
+        const wordProgress = document.getElementById('wordProgress');
+        const progressBar = document.getElementById('progressBar');
+        const wordStatus = document.getElementById('wordStatus');
+        const backspaceCountEl = document.getElementById('backspaceCount');
+        const timer = document.getElementById('timer');
+        const submitBtn = document.getElementById('submitBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const errorList = document.getElementById('errorList');
+        const resultsModal = document.getElementById('resultsModal');
+
+        // Start test when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            startTest();
+        });
+
+        function startTest() {
+            isTestActive = true;
+            startTime = Date.now();
+            backspaceCount = 0;
+            
+            // Notify server
+            socket.emit('start-test');
+            
+            // Start timer
+            startTimer();
+            
+            // Focus on textarea
+            essayText.focus();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const remaining = timeLimit - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    timer.textContent = '00:00';
+                    timer.classList.add('animate-pulse');
+                    submitEssay();
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Warning when less than 5 minutes remaining
+                if (remaining <= 300) {
+                    timer.classList.add('animate-pulse');
+                }
+            }, 1000);
+        }
+
+        // Track backspace usage
+        essayText.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace') {
+                backspaceCount++;
+                backspaceCountEl.textContent = backspaceCount;
+                socket.emit('backspace-pressed');
+            }
+        });
+
+        // Real-time word count and analysis
+        essayText.addEventListener('input', function() {
+            const text = essayText.value;
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            const currentWordCount = words.length;
+            
+            // Update word count
+            wordCount.textContent = currentWordCount;
+            wordProgress.textContent = `${currentWordCount}/200`;
+            
+            // Update progress bar
+            const progress = Math.min((currentWordCount / 200) * 100, 100);
+            progressBar.style.width = `${progress}%`;
+            
+            // Update word count status
+            updateWordStatus(currentWordCount);
+            
+            // Check for common errors
+            checkForErrors(text);
+        });
+
+        function updateWordStatus(count) {
+            const statusEl = wordStatus;
+            
+            if (count === 0) {
+                statusEl.innerHTML = '<i class="fas fa-circle text-gray-400 mr-2"></i>Start writing...';
+                statusEl.className = 'text-sm font-medium p-2 rounded text-gray-400';
+            } else if (count < 180) {
+                statusEl.innerHTML = '<i class="fas fa-circle text-red-400 mr-2"></i>Too few words';
+                statusEl.className = 'text-sm font-medium p-2 rounded text-red-400 bg-red-100';
+            } else if (count >= 180 && count <= 200) {
+                statusEl.innerHTML = '<i class="fas fa-circle text-green-400 mr-2"></i>Perfect word count';
+                statusEl.className = 'text-sm font-medium p-2 rounded text-green-400 bg-green-100';
+            } else {
+                statusEl.innerHTML = '<i class="fas fa-circle text-yellow-400 mr-2"></i>Too many words';
+                statusEl.className = 'text-sm font-medium p-2 rounded text-yellow-400 bg-yellow-100';
+            }
+        }
+
+        function checkForErrors(text) {
+            const errors = [];
+            
+            // Common spelling mistakes
+            const commonMistakes = {
+                'teh': 'the',
+                'recieve': 'receive',
+                'seperate': 'separate',
+                'definately': 'definitely',
+                'occured': 'occurred',
+                'begining': 'beginning',
+                'beleive': 'believe',
+                'neccessary': 'necessary',
+                'accomodate': 'accommodate',
+                'embarass': 'embarrass'
+            };
+            
+            Object.keys(commonMistakes).forEach(mistake => {
+                const regex = new RegExp(`\\b${mistake}\\b`, 'gi');
+                if (regex.test(text)) {
+                    errors.push(`"${mistake}" should be "${commonMistakes[mistake]}"`);
+                }
+            });
+            
+            // Update error list
+            if (errors.length === 0) {
+                errorList.innerHTML = '<div class="text-white/60 italic">No errors detected</div>';
+            } else {
+                errorList.innerHTML = errors.map(error => 
+                    `<div class="text-red-300 text-xs"><i class="fas fa-exclamation-triangle mr-1"></i>${error}</div>`
+                ).join('');
+            }
+        }
+
+        // Submit essay
+        submitBtn.addEventListener('click', submitEssay);
+        
+        function submitEssay() {
+            if (!isTestActive) return;
+            
+            isTestActive = false;
+            clearInterval(timerInterval);
+            
+            const essay = essayText.value;
+            const words = essay.trim().split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+            const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+            
+            // Disable textarea
+            essayText.disabled = true;
+            submitBtn.disabled = true;
+            
+            // Send to server for evaluation
+            fetch('/submit-essay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    essay: essay,
+                    backspaceCount: backspaceCount,
+                    timeTaken: timeTaken,
+                    wordCount: wordCount
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showResults(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting essay. Please try again.');
+            });
+        }
+
+        function showResults(data) {
+            // Populate results
+            document.getElementById('finalScore').textContent = data.score;
+            document.getElementById('finalWordCount').textContent = data.wordCount;
+            document.getElementById('finalTime').textContent = formatTime(data.timeTaken);
+            document.getElementById('finalBackspace').textContent = data.backspaceCount;
+            
+            // Calculate penalties
+            const backspacePenalty = data.backspaceCount * 2;
+            const wordDeviation = Math.abs(data.wordCount - 190);
+            const wordPenalty = wordDeviation * 0.5;
+            const timePenalty = data.timeTaken > 1500 ? (data.timeTaken - 1500) / 60 * 2 : 0;
+            
+            document.getElementById('backspacePenalty').textContent = `-${backspacePenalty} pts`;
+            document.getElementById('wordPenalty').textContent = `-${Math.round(wordPenalty)} pts`;
+            document.getElementById('timePenalty').textContent = `-${Math.round(timePenalty)} pts`;
+            
+            // Show feedback
+            const feedbackList = document.getElementById('feedbackList');
+            feedbackList.innerHTML = data.feedback.map(feedback => 
+                `<div class="flex items-start"><i class="fas fa-info-circle text-blue-500 mr-2 mt-1"></i><span>${feedback}</span></div>`
+            ).join('');
+            
+            // Show errors
+            const finalErrors = document.getElementById('finalErrors');
+            if (data.errors.length === 0) {
+                finalErrors.innerHTML = '<div class="text-green-600">No errors found!</div>';
+            } else {
+                finalErrors.innerHTML = data.errors.map(error => 
+                    `<div><i class="fas fa-times-circle mr-1"></i>${error}</div>`
+                ).join('');
+            }
+            
+            // Show modal
+            resultsModal.classList.remove('hidden');
+            resultsModal.classList.add('flex');
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Reset button
+        resetBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset? All progress will be lost.')) {
+                location.reload();
+            }
+        });
+
+        // Prevent form submission on Enter
+        essayText.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                submitEssay();
+            }
+        });
+    </script>
+</body>
+</html> 

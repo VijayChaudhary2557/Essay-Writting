@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Essay Topic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .topic-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .topic-card.selected {
+            border: 3px solid #10b981;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-white mb-4">
+                <i class="fas fa-list-check mr-4"></i>
+                Choose Your Topic
+            </h1>
+            <p class="text-xl text-white/90 max-w-2xl mx-auto">
+                Select the topic you'd like to write about. Choose wisely as this will be your essay subject!
+            </p>
+        </div>
+
+        <!-- Topic Selection -->
+        <div class="max-w-4xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <% topics.forEach((topic, index) => { %>
+                    <div class="topic-card bg-white/10 backdrop-blur-sm rounded-xl p-6 border-2 border-transparent" 
+                         data-topic-index="<%= index %>"
+                         onclick="selectTopic(<%= index %>)">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h3 class="text-xl font-semibold text-white mb-2">
+                                    <i class="fas fa-lightbulb mr-3 text-yellow-300"></i>
+                                    Topic <%= index + 1 %>
+                                </h3>
+                                <p class="text-white/90 text-lg leading-relaxed"><%= topic %></p>
+                            </div>
+                            <div class="ml-4">
+                                <div class="w-6 h-6 rounded-full border-2 border-white/30 flex items-center justify-center">
+                                    <div class="w-3 h-3 rounded-full bg-white/30"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Topic Tags -->
+                        <div class="flex flex-wrap gap-2">
+                            <% 
+                            const tags = getTopicTagsForEJS(topic);
+                            tags.forEach(tag => { 
+                            %>
+                                <span class="bg-white/20 text-white/80 text-xs px-2 py-1 rounded-full">
+                                    <%= tag %>
+                                </span>
+                            <% }); %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Selection Info -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 max-w-2xl mx-auto">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-info-circle mr-3"></i>
+                    Selection Guidelines
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6 text-left">
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-green-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-white">Choose Familiar Topics</h4>
+                                <p class="text-white/80 text-sm">Pick topics you have knowledge about</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-green-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-white">Consider Your Interest</h4>
+                                <p class="text-white/80 text-sm">Select topics that interest you</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-white">Time Management</h4>
+                                <p class="text-white/80 text-sm">You have 25 minutes to complete</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-white">Word Limit</h4>
+                                <p class="text-white/80 text-sm">Write 180-200 words</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center space-x-4">
+            <button id="startTestBtn" 
+                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                    disabled>
+                <i class="fas fa-play mr-3"></i>
+                Start Test with Selected Topic
+            </button>
+            <a href="/" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-8 rounded-lg transition-colors duration-300 inline-block">
+                <i class="fas fa-arrow-left mr-3"></i>
+                Back to Home
+            </a>
+        </div>
+
+        <!-- Selected Topic Display -->
+        <div id="selectedTopicInfo" class="mt-8 bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-2xl mx-auto hidden">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-check-circle text-green-400 mr-3"></i>
+                    Selected Topic
+                </h3>
+                <div class="bg-white/20 rounded-lg p-4">
+                    <p id="selectedTopicText" class="text-white text-lg font-medium"></p>
+                </div>
+                <p class="text-white/80 mt-4 text-sm">
+                    Ready to start your essay? Click "Start Test" above!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedTopicIndex = null;
+
+        function selectTopic(index) {
+            // Remove previous selection
+            document.querySelectorAll('.topic-card').forEach(card => {
+                card.classList.remove('selected');
+                const radio = card.querySelector('.w-3.h-3');
+                radio.className = 'w-3 h-3 rounded-full bg-white/30';
+            });
+
+            // Select new topic
+            const selectedCard = document.querySelector(`[data-topic-index="${index}"]`);
+            selectedCard.classList.add('selected');
+            const radio = selectedCard.querySelector('.w-3.h-3');
+            radio.className = 'w-3 h-3 rounded-full bg-white';
+
+            selectedTopicIndex = index;
+
+            // Enable start button
+            const startBtn = document.getElementById('startTestBtn');
+            startBtn.disabled = false;
+
+            // Show selected topic info
+            const selectedTopicInfo = document.getElementById('selectedTopicInfo');
+            const selectedTopicText = document.getElementById('selectedTopicText');
+            const topics = [
+                "The Impact of Technology on Modern Education",
+                "Climate Change: Causes and Solutions",
+                "The Importance of Mental Health Awareness",
+                "Social Media: Benefits and Drawbacks",
+                "The Future of Remote Work",
+                "Artificial Intelligence in Daily Life",
+                "The Role of Women in Leadership",
+                "Sustainable Living: A Necessity",
+                "The Power of Reading Books",
+                "Digital Privacy in the Internet Age"
+            ];
+            
+            selectedTopicText.textContent = topics[index];
+            selectedTopicInfo.classList.remove('hidden');
+            selectedTopicInfo.classList.add('block');
+
+            // Smooth scroll to selected topic info
+            selectedTopicInfo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Start test button
+        document.getElementById('startTestBtn').addEventListener('click', function() {
+            if (selectedTopicIndex !== null) {
+                window.location.href = `/test?topic=${selectedTopicIndex}`;
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key >= '1' && e.key <= '9') {
+                const index = parseInt(e.key) - 1;
+                if (index < 10) { // We have 10 topics
+                    selectTopic(index);
+                }
+            }
+        });
+
+        // Helper function to get topic tags (you can customize this)
+        function getTopicTags(topic) {
+            const tagMap = {
+                'Technology': ['tech', 'modern'],
+                'Climate': ['environment', 'global'],
+                'Mental Health': ['health', 'wellness'],
+                'Social Media': ['digital', 'communication'],
+                'Remote Work': ['business', 'future'],
+                'Artificial Intelligence': ['tech', 'future'],
+                'Leadership': ['business', 'society'],
+                'Sustainable': ['environment', 'lifestyle'],
+                'Reading': ['education', 'personal'],
+                'Privacy': ['digital', 'security']
+            };
+
+            for (const [key, tags] of Object.entries(tagMap)) {
+                if (topic.includes(key)) {
+                    return tags;
+                }
+            }
+            return ['general'];
+        }
+    </script>
+</body>
+</html> 

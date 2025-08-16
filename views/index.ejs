@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essay Writing Test - Improve Your Writing Skills</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-white mb-4">
+                <i class="fas fa-pen-fancy mr-4"></i>
+                Essay Writing Test
+            </h1>
+            <p class="text-xl text-white/90 max-w-2xl mx-auto">
+                Test your writing skills with our intelligent essay evaluation system. 
+                Write 180-200 words within 25 minutes and get instant feedback!
+            </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-3 gap-8 mb-12">
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 card-hover">
+                <div class="text-center">
+                    <i class="fas fa-clock text-4xl text-yellow-300 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-white mb-2">Time Management</h3>
+                    <p class="text-white/80">25-minute time limit to test your writing speed and efficiency</p>
+                </div>
+            </div>
+            
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 card-hover">
+                <div class="text-center">
+                    <i class="fas fa-keyboard text-4xl text-blue-300 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-white mb-2">Keyboard Tracking</h3>
+                    <p class="text-white/80">Real-time monitoring of backspace usage with point deduction</p>
+                </div>
+            </div>
+            
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 card-hover">
+                <div class="text-center">
+                    <i class="fas fa-spell-check text-4xl text-green-300 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-white mb-2">AI Evaluation</h3>
+                    <p class="text-white/80">Instant grammar, spelling, and structure analysis</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Rules -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-12">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                <i class="fas fa-list-check mr-3"></i>
+                Test Rules & Guidelines
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-green-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">Word Count</h4>
+                            <p class="text-white/80">Write between 180-200 words for optimal scoring</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-green-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">Time Limit</h4>
+                            <p class="text-white/80">Complete your essay within 25 minutes</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-green-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">Topic Assignment</h4>
+                            <p class="text-white/80">You'll get a random topic to write about</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">Backspace Penalty</h4>
+                            <p class="text-white/80">Each backspace reduces your score by 2 points</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">Grammar Check</h4>
+                            <p class="text-white/80">Spelling and grammar errors will be highlighted</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">No Copy-Paste</h4>
+                            <p class="text-white/80">Write original content - no plagiarism allowed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Test Button -->
+        <div class="text-center">
+            <a href="/topics" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold text-xl rounded-full hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
+                <i class="fas fa-play mr-3"></i>
+                Choose Topic & Start Test
+            </a>
+            <p class="text-white/70 mt-4 text-sm">
+                Select your preferred topic and begin your writing assessment
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-16">
+            <p class="text-white/60">
+                <i class="fas fa-heart text-red-400 mr-2"></i>
+                Built with modern web technologies for the best user experience
+            </p>
+        </div>
+    </div>
+</body>
+</html> 
