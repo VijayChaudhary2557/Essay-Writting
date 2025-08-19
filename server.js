@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const http = require('http');
 const socketIo = require('socket.io');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
@@ -17,28 +18,65 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Essay topics
-const essayTopics = [
-    "First Campus Interview Experience",
-    "My Best Friend",
-    "Are we too dependent on Computers",
-    "Digitization and its benefits",
-    "My last vacation with Parents",
-    "Social media has made it easier to misuse one’s right to freedom of expression.",
-    "Violent video games affect children negatively.",
-    "Success comes to those who take risks.",
-    "People today are more materialistic and less satisfied as compared to previous generations.",
-    "Do you think progress is always good? Cite examples to support your view.",
-    "At least one form of physical training should be mandatory across education institutes",
-    "Social media has made us less social.",
-    "The winner stands alone.",
-    "Do ethics or moral principles campus Interview Experience",
-    "My Best Friend",
-    "Are we too dependent on Computers",
-    "Digitization and its benefits",
-    "My last vacation with Parents",
-    "Unlock now to access the rest of this document!"
-];
+// Topics file path
+const topicsFilePath = path.join(__dirname, 'data', 'topics.json');
+
+// Ensure data directory exists
+if (!fs.existsSync(path.join(__dirname, 'data'))) {
+    fs.mkdirSync(path.join(__dirname, 'data'));
+}
+
+// Load topics from file or use default
+function loadTopics() {
+    try {
+        if (fs.existsSync(topicsFilePath)) {
+            const data = fs.readFileSync(topicsFilePath, 'utf8');
+            return JSON.parse(data);
+        }
+    } catch (error) {
+        console.error('Error loading topics:', error);
+    }
+    
+    // Default topics if file doesn't exist
+    const defaultTopics = [
+        "First Campus Interview Experience",
+        "My Best Friend",
+        "Are we too dependent on Computers",
+        "Digitization and its benefits",
+        "My last vacation with Parents",
+        "Social media has made it easier to misuse one's right to freedom of expression.",
+        "Violent video games affect children negatively.",
+        "Success comes to those who take risks.",
+        "People today are more materialistic and less satisfied as compared to previous generations.",
+        "Do you think progress is always good? Cite examples to support your view.",
+        "At least one form of physical training should be mandatory across education institutes",
+        "Social media has made us less social.",
+        "The winner stands alone.",
+        "Do ethics or moral principles matter in business?",
+        "The impact of technology on human relationships",
+        "Should social media platforms be regulated?",
+        "The importance of mental health awareness",
+        "Climate change: Individual responsibility vs government action",
+        "The future of education in the digital age",
+        "Work-life balance in the modern world"
+    ];
+    
+    // Save default topics to file
+    saveTopics(defaultTopics);
+    return defaultTopics;
+}
+
+// Save topics to file
+function saveTopics(topics) {
+    try {
+        fs.writeFileSync(topicsFilePath, JSON.stringify(topics, null, 2));
+    } catch (error) {
+        console.error('Error saving topics:', error);
+    }
+}
+
+// Load topics
+let essayTopics = loadTopics();
 
 // Store active sessions
 const activeSessions = new Map();
@@ -62,17 +100,88 @@ app.get('/topics', (req, res) => {
                 'Leadership': ['business', 'society'],
                 'Sustainable': ['environment', 'lifestyle'],
                 'Reading': ['education', 'personal'],
-                'Privacy': ['digital', 'security']
+                'Privacy': ['digital', 'security'],
+                'Education': ['learning', 'academic'],
+                'Business': ['corporate', 'professional'],
+                'Environment': ['nature', 'green'],
+                'Health': ['wellness', 'medical'],
+                'Society': ['community', 'social']
             };
 
             for (const [key, tags] of Object.entries(tagMap)) {
-                if (topic.includes(key)) {
+                if (topic.toLowerCase().includes(key.toLowerCase())) {
                     return tags;
                 }
             }
             return ['general'];
         }
     });
+});
+
+// Admin routes for managing topics
+app.get('/admin', (req, res) => {
+    res.render('admin', { topics: essayTopics });
+});
+
+app.post('/admin/add-topic', (req, res) => {
+    const { topic } = req.body;
+    
+    if (!topic || topic.trim().length === 0) {
+        return res.status(400).json({ error: 'Topic cannot be empty' });
+    }
+    
+    const newTopic = topic.trim();
+    
+    // Check if topic already exists
+    if (essayTopics.includes(newTopic)) {
+        return res.status(400).json({ error: 'Topic already exists' });
+    }
+    
+    // Add new topic
+    essayTopics.push(newTopic);
+    saveTopics(essayTopics);
+    
+    res.json({ success: true, message: 'Topic added successfully', topics: essayTopics });
+});
+
+app.delete('/admin/delete-topic/:index', (req, res) => {
+    const index = parseInt(req.params.index);
+    
+    if (isNaN(index) || index < 0 || index >= essayTopics.length) {
+        return res.status(400).json({ error: 'Invalid topic index' });
+    }
+    
+    const deletedTopic = essayTopics.splice(index, 1)[0];
+    saveTopics(essayTopics);
+    
+    res.json({ success: true, message: 'Topic deleted successfully', deletedTopic, topics: essayTopics });
+});
+
+app.put('/admin/edit-topic/:index', (req, res) => {
+    const index = parseInt(req.params.index);
+    const { topic } = req.body;
+    
+    if (isNaN(index) || index < 0 || index >= essayTopics.length) {
+        return res.status(400).json({ error: 'Invalid topic index' });
+    }
+    
+    if (!topic || topic.trim().length === 0) {
+        return res.status(400).json({ error: 'Topic cannot be empty' });
+    }
+    
+    const newTopic = topic.trim();
+    
+    // Check if topic already exists (excluding current index)
+    const existingIndex = essayTopics.findIndex((t, i) => i !== index && t === newTopic);
+    if (existingIndex !== -1) {
+        return res.status(400).json({ error: 'Topic already exists' });
+    }
+    
+    // Update topic
+    essayTopics[index] = newTopic;
+    saveTopics(essayTopics);
+    
+    res.json({ success: true, message: 'Topic updated successfully', topics: essayTopics });
 });
 
 app.get('/test', (req, res) => {

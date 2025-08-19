@@ -1,166 +1,118 @@
-# Essay Writing Test Website
+# Essay Writing Test Platform
 
-एक advanced essay writing test website जो real-time keyboard tracking, AI-powered error detection, और comprehensive evaluation प्रदान करती है।
+A modern web application for conducting essay writing tests with real-time evaluation, keyboard tracking, and intelligent feedback.
 
-## 🚀 Features
+## Features
 
-### Core Features
-- **Essay Writing Test** - 180-200 words का essay लिखना
-- **Time Management** - 25 minutes का time limit
-- **Keyboard Tracking** - Backspace usage को real-time track करना
-- **Point System** - Backspace के लिए points deduction
-- **AI Evaluation** - Grammar, spelling, और structure analysis
-- **Real-time Feedback** - Instant error detection और suggestions
+### 🎯 Core Features
+- **Essay Writing Tests**: Write essays on various topics within 25 minutes
+- **Real-time Evaluation**: Instant scoring and feedback
+- **Keyboard Tracking**: Monitor backspace usage and typing patterns
+- **Word Count Management**: Target 180-200 words for optimal scoring
+- **Grammar & Spelling Check**: Automatic error detection and suggestions
 
-### Advanced Features
-- **Auto-save** - हर 30 seconds में essay automatically save होता है
-- **Keyboard Shortcuts** - Ctrl+S (save), Ctrl+Enter (submit)
-- **Progress Tracking** - Word count progress bar
-- **Error Highlighting** - Common spelling mistakes detection
-- **Responsive Design** - Mobile और desktop friendly
-- **Beautiful UI** - Modern design with Tailwind CSS
+### 🛠️ Admin Features (NEW!)
+- **Topic Management**: Add, edit, and delete essay topics
+- **Dynamic Topic System**: Topics are stored in JSON file for easy management
+- **Admin Panel**: Beautiful interface for managing topics
+- **Real-time Updates**: Changes reflect immediately across the platform
 
-## 🛠️ Installation
+## Installation
 
-### Prerequisites
-- Node.js (version 14 or higher)
-- npm (Node Package Manager)
-
-### Setup Instructions
-
-1. **Clone या download करें:**
+1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd essay-writing-test
 ```
 
-2. **Dependencies install करें:**
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. **Server start करें:**
+3. Start the server:
 ```bash
 npm start
 ```
 
-4. **Development mode में run करें:**
-```bash
-npm run dev
-```
+4. Open your browser and visit `http://localhost:3000`
 
-5. **Browser में जाएं:**
-```
-http://localhost:3000
-```
+## Usage
 
-## 📁 Project Structure
+### For Students/Test Takers
+1. Visit the home page
+2. Click "Choose Topic & Start Test"
+3. Select your preferred essay topic
+4. Write your essay within 25 minutes (180-200 words)
+5. Submit to get instant feedback and scoring
+
+### For Administrators
+1. Click "Manage Topics (Admin)" from the home page
+2. Add new topics using the form
+3. Edit existing topics by clicking the edit button
+4. Delete topics using the delete button
+5. All changes are automatically saved
+
+## API Endpoints
+
+### Admin Routes
+- `GET /admin` - Admin panel interface
+- `POST /admin/add-topic` - Add a new topic
+- `PUT /admin/edit-topic/:index` - Edit an existing topic
+- `DELETE /admin/delete-topic/:index` - Delete a topic
+
+### Test Routes
+- `GET /` - Home page
+- `GET /topics` - Topic selection page
+- `GET /test` - Essay writing test page
+- `POST /submit-essay` - Submit essay for evaluation
+
+## File Structure
 
 ```
-essay-writing-test/
-├── package.json          # Project dependencies
-├── server.js            # Main server file
-├── README.md            # Project documentation
+├── server.js              # Main server file
+├── package.json           # Dependencies and scripts
+├── data/
+│   └── topics.json        # Topics storage (auto-generated)
 ├── views/
-│   ├── index.ejs        # Landing page
-│   └── test.ejs         # Test interface
-└── public/
-    └── js/
-        └── test.js      # Frontend utilities
+│   ├── index.ejs          # Home page
+│   ├── topics.ejs         # Topic selection page
+│   ├── test.ejs           # Essay test page
+│   └── admin.ejs          # Admin panel (NEW!)
+├── public/
+│   └── js/
+│       └── test.js        # Test page JavaScript
+└── README.md              # This file
 ```
 
-## 🎯 How It Works
+## Scoring System
 
-### Test Flow
-1. **Landing Page** - User को test के बारे में information
-2. **Topic Assignment** - Random topic generate होता है
-3. **Writing Interface** - Real-time word count और error detection
-4. **Keyboard Tracking** - Backspace usage monitor होता है
-5. **Submission** - Essay evaluate होता है
-6. **Results** - Detailed feedback और score
-
-### Scoring System
 - **Base Score**: 100 points
 - **Backspace Penalty**: -2 points per backspace
-- **Word Count Penalty**: -0.5 points per word deviation from 190
+- **Word Count Deviation**: -0.5 points per word deviation from target (180-200)
 - **Time Penalty**: -2 points per minute over 25 minutes
+- **Grammar Errors**: Additional deductions for spelling and grammar mistakes
 
-### Error Detection
-- Common spelling mistakes
-- Sentence structure issues
-- Word repetition
-- Sentence length analysis
-
-## 🎨 UI Features
-
-### Landing Page
-- Beautiful gradient background
-- Feature highlights
-- Test rules and guidelines
-- Responsive design
-
-### Test Interface
-- Real-time statistics display
-- Progress tracking
-- Error highlighting
-- Writing tips
-- Auto-save functionality
-
-### Results Modal
-- Comprehensive score breakdown
-- Detailed feedback
-- Error analysis
-- Performance statistics
-
-## 🔧 Technical Stack
+## Technology Stack
 
 - **Backend**: Node.js, Express.js
-- **Frontend**: EJS templates, JavaScript
-- **Styling**: Tailwind CSS
+- **Frontend**: EJS templates, Tailwind CSS
 - **Real-time**: Socket.IO
+- **Data Storage**: JSON file system
 - **Icons**: Font Awesome
 
-## 📱 Responsive Design
+## Contributing
 
-Website सभी devices पर perfectly work करती है:
-- Desktop computers
-- Tablets
-- Mobile phones
-- Different screen sizes
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-## 🎮 Keyboard Shortcuts
+## License
 
-- **Ctrl + S**: Save essay draft
-- **Ctrl + Enter**: Submit essay
-- **Backspace**: Tracked for scoring
+MIT License - feel free to use this project for educational purposes.
 
-## 🔒 Auto-save Feature
+## Support
 
-- हर 30 seconds में automatic save
-- Browser refresh के बाद भी data safe
-- 2 hours तक draft available
-- User confirmation before loading
-
-## 🚀 Future Enhancements
-
-- User authentication
-- Multiple essay topics
-- Advanced grammar checking
-- Plagiarism detection
-- Performance analytics
-- Export results
-
-## 📞 Support
-
-अगर कोई issue या question है तो:
-- GitHub issues create करें
-- Documentation check करें
-- Code review करें
-
-## 📄 License
-
-MIT License - Free to use and modify
-
----
-
-**Built with ❤️ for better writing skills assessment** 
+For questions or issues, please open an issue on the repository. 
